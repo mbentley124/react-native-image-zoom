@@ -1,4 +1,6 @@
-## Show Cases
+Works nearly identically to https://github.com/ascoders/react-native-image-zoom except panning is done with two fingers. Can be done while zooming. 
+
+## Show Cases (From https://github.com/ascoders/react-native-image-zoom)
 
 > Zoom while sliding
 
@@ -13,7 +15,7 @@
 ### Installation
 
 ```bash
-npm i react-native-image-pan-zoom --save
+npm i react-native-two-finger-image-zoom
 ```
 
 ### Basic Usage
@@ -65,7 +67,7 @@ export default class App extends React.Component {
 | clickDistance              | number                                                                                                                           | how many finger movement can also trigger `onClick`                                                                                                                   | 10           |
 | horizontalOuterRangeOffset | (offsetX?: number)=>void                                                                                                         | horizontal beyond the distance, the parent to do picture switching, you can listen to this function. When this function is triggered, you can do the switch operation | ()=>{}       |
 | onDragLeft                 | ()=>void                                                                                                                         | trigger to switch to the left of the graph, the left sliding speed exceeds the threshold when triggered                                                               | ()=>{}       |
-| responderRelease           | (vx: number)=>void                                                                                                               | let go but do not cancel                                                                                                                                              | ()=>{}       |
+| responderRelease           | (vx: number, scale: number, xPosition, yPostion)=>void                                                                           | let go but do not cancel                                                                                                                                              | ()=>{}       |
 | maxOverflow                | number                                                                                                                           | maximum sliding threshold                                                                                                                                             | 100          |
 | longPressTime              | number                                                                                                                           | long press threshold                                                                                                                                                  | 800          |
 | onLongPress                | ()=>void                                                                                                                         | on longPress                                                                                                                                                          | ()=> {}      |
@@ -85,23 +87,3 @@ export default class App extends React.Component {
 | resetScale |           | Reset the scale of the image                                                                                     |
 | centerOn   | ICenterOn | Centers the image in the position indicated. ICenterOn={ x: number, y: number, scale: number, duration: number } |
 
-## Development pattern
-
-### Step 1, run TS listener
-
-After clone this repo, then:
-
-```bash
-npm install
-npm start
-```
-
-### Step 2, run demo
-
-```bash
-cd demo
-npm install
-npm start
-```
-
-Then, scan the QR, use your [expo app](https://expo.io./).
