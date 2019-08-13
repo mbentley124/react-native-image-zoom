@@ -46,7 +46,10 @@ export default class ImageViewer extends React.Component<Props, State> {
 
   // 滑动过程中，x y的总位移
   private horizontalWholeCounter = 0;
-  private verticalWholeCounter = 0;
+	private verticalWholeCounter = 0;
+	
+	private prevCenterX = null;
+  private prevCenterY = null;
 
   // 两手距离中心点位置
   private centerDiffX = 0;
@@ -80,7 +83,7 @@ export default class ImageViewer extends React.Component<Props, State> {
       onStartShouldSetPanResponder: () => true,
       onPanResponderTerminationRequest: () => false,
 
-      onPanResponderGrant: evt => {
+      onPanResponderGrant: (evt, ges) => {
         // 开始手势操作
         this.lastPositionX = null;
         this.lastPositionY = null;
@@ -95,7 +98,10 @@ export default class ImageViewer extends React.Component<Props, State> {
         // 任何手势开始，都清空单击计时器
         if (this.singleClickTimeout) {
           clearTimeout(this.singleClickTimeout);
-        }
+				}
+				
+				this.prevCenterX = null;
+        this.prevCenterY = null;
 
         if (evt.nativeEvent.changedTouches.length > 1) {
           const centerX = (evt.nativeEvent.changedTouches[0].pageX + evt.nativeEvent.changedTouches[1].pageX) / 2;
@@ -407,8 +413,26 @@ export default class ImageViewer extends React.Component<Props, State> {
               const diffScale = this.scale - beforeScale;
               // 找到两手中心点距离页面中心的位移
               // 移动位置
-              this.positionX -= (this.centerDiffX * diffScale) / this.scale;
-              this.positionY -= (this.centerDiffY * diffScale) / this.scale;
+              var centerX = (evt.nativeEvent.changedTouches[0].pageX + evt.nativeEvent.changedTouches[1].pageX) / 2;
+							this.positionY -= (this.centerDiffY * diffScale) / this.scale;		                            
+							this.centerDiffX = centerX - this.props.cropWidth / 2;
+              var centerY = (evt.nativeEvent.changedTouches[0].pageY + evt.nativeEvent.changedTouches[1].pageY) / 2;
+              this.centerDiffY = centerY - this.props.cropHeight / 2;
+                
+              var offsetX = 0;
+							if (this.prevCenterX) {
+								offsetX = this.prevCenterX - centerX;
+							}
+							var offsetY = 0;
+							if (this.prevCenterY) {
+								offsetY = this.prevCenterY - centerY;
+							}
+							this.prevCenterY = centerY;
+							this.prevCenterX = centerX;
+							this.positionX -= (this.centerDiffX * diffScale) / this.scale + (offsetX / this.scale);
+							this.positionY -= (this.centerDiffY * diffScale) / this.scale + (offsetY / this.scale);
+
+
               this.animatedPositionX.setValue(this.positionX);
               this.animatedPositionY.setValue(this.positionY);
             }
@@ -448,7 +472,7 @@ export default class ImageViewer extends React.Component<Props, State> {
         } else {
           // 多手势结束，或者滑动结束
           if (this.props.responderRelease) {
-            this.props.responderRelease(gestureState.vx, this.scale);
+            this.props.responderRelease(gestureState.vx, this.scale, this.positionX, this.positionY);
           }
 
           this.panResponderReleaseResolve();
