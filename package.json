@@ -2,7 +2,7 @@
   "name": "react-native-two-finger-image-zoom",
   "version": "1.0.0",
   "description": "Zooms and pans with two fingers",
-  "main": "index.js",
+  "main": "built/index.js",
   "dependencies": {},
   "devDependencies": {},
   "scripts": {
